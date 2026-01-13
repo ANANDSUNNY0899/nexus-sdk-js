@@ -1,0 +1,28 @@
+{
+  "name": "nexus-gateway-js",
+  "version": "1.0.3",
+  "description": "Official Node.js SDK for Nexus Gateway",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai",
+    "nexus",
+    "gateway",
+    "openai",
+    "sdk"
+  ],
+  "author": "Sunny Anand",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
