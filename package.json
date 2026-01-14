@@ -1,6 +1,6 @@
 {
   "name": "nexus-gateway-js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Official Node.js SDK for Nexus Gateway",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
