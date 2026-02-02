@@ -1,8 +1,9 @@
 interface ChatOptions {
     model?: string;
     stream?: boolean;
+    providerKey?: string;
 }
-export declare class NexusClient {
+declare class NexusClient {
     private apiKey;
     private baseUrl;
     constructor(config: {
@@ -10,12 +11,14 @@ export declare class NexusClient {
         baseUrl?: string;
     });
     /**
-     * Send a chat message to the AI.
+     * Execute universal inference with Adaptive Routing.
      * @param message The user's prompt
-     * @param options Model and Stream settings
+     * @param options Engine configuration and BYOK settings
      */
     chat(message: string, options?: ChatOptions): Promise<any>;
     private normalRequest;
     private streamRequest;
+    private checkError;
 }
-export {};
+
+export { type ChatOptions, NexusClient };
