@@ -82,6 +82,7 @@ console.log(response); // "Paris"
   OpenAI Pro	pro	gpt-4o
 ```
 
+```
 📊 Infrastructure Benchmarks
 Feature	Standard API	Nexus Gateway
 Latency	1200ms - 3000ms	5ms (Cache Hit)
@@ -89,12 +90,15 @@ Cost	100% Billing	$0.00 (Cache Hit)
 Failover	Manual	Autonomous Self-Healing
 
 ```
-
+```
 🔑 Authentication
 To use this SDK, you require a valid API Key.
 Get your Free API Key here : https://www.nexus-gateway.org/
 ```
 License
-MIT License © 2025 Sunny Anand | 📘 Documentation: https://www.nexus-gateway.org/docs  | 💻 GitHub Repository: https://github.com/ANANDSUNNY0899/NexusGateway
+MIT License © 2025 Sunny Anand |
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/ANANDSUNNY0899/NexusGateway)
+[![Docs](https://img.shields.io/badge/Docs-Documentation-blue)](https://www.nexus-gateway.org/docs)
+
 
 ```
