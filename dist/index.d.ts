@@ -1,5 +1,6 @@
 interface ChatOptions {
     model?: string;
+    message: string;
     stream?: boolean;
     providerKey?: string;
 }
@@ -11,14 +12,13 @@ declare class NexusClient {
         baseUrl?: string;
     });
     /**
-     * Execute universal inference with Adaptive Routing.
-     * @param message The user's prompt
-     * @param options Engine configuration and BYOK settings
+     * Execute universal inference with Adaptive Routing & Sovereign Shield.
      */
-    chat(message: string, options?: ChatOptions): Promise<any>;
-    private normalRequest;
-    private streamRequest;
-    private checkError;
+    chat(options: ChatOptions): Promise<ReadableStream<Uint8Array<ArrayBuffer>> | null>;
+    /**
+     * Helper to verify API Key integrity
+     */
+    validate_key(): Promise<boolean>;
 }
 
 export { type ChatOptions, NexusClient };

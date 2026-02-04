@@ -2,8 +2,9 @@
 
 export interface ChatOptions {
   model?: string;
+  message: string;
   stream?: boolean;
-  providerKey?: string; // 🚀 NEW: BYOK Support
+  providerKey?: string; // User's personal API key (BYOK)
 }
 
 export class NexusClient {
@@ -16,103 +17,56 @@ export class NexusClient {
   }
 
   /**
-   * Execute universal inference with Adaptive Routing.
-   * @param message The user's prompt
-   * @param options Engine configuration and BYOK settings
+   * Execute universal inference with Adaptive Routing & Sovereign Shield.
    */
-  async chat(message: string, options?: ChatOptions): Promise<any> {
-    const model = options?.model || "llama-3.3-70b-versatile"; // 🚀 THE NEW DEFAULT
-    const isStream = options?.stream ?? true; // 🚀 Streaming enabled by default
-    const endpoint = isStream ? "/chat/stream" : "/chat";
+  async chat(options: ChatOptions) {
+    const { 
+        model = "llama-3.3-70b-versatile", 
+        message, 
+        stream = true 
+    } = options;
 
-    // 1. Prepare Headers with BYOK Mapping
+    const url = `${this.baseUrl}/chat/stream`;
+
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${this.apiKey}`
+      "Authorization": `Bearer ${this.apiKey}`,
     };
 
-    if (options?.providerKey) {
+    // 🛡️ BYOK HEADER MAPPING
+    if (options.providerKey) {
         const m = model.toLowerCase();
         if (m.includes("gpt")) headers["x-nexus-openai-key"] = options.providerKey;
         else if (m.includes("llama") || m.includes("mixtral")) headers["x-nexus-groq-key"] = options.providerKey;
         else if (m.includes("gemini")) headers["x-nexus-gemini-key"] = options.providerKey;
+        else if (m.includes("claude")) headers["x-nexus-anthropic-key"] = options.providerKey;
     }
 
-    const payload = { message, model, stream: isStream };
-
-    if (isStream) {
-        return this.streamRequest(endpoint, payload, headers);
-    } else {
-        return this.normalRequest(endpoint, payload, headers);
-    }
-  }
-
-  private async normalRequest(endpoint: string, body: any, headers: any) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+    const response = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify(body)
+      body: JSON.stringify({ message, model, stream }),
     });
 
-    await this.checkError(response);
-    const data = await response.json();
-    return data.choices[0].message.content;
-  }
-
-  private async *streamRequest(endpoint: string, body: any, headers: any) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body)
-    });
-
-    await this.checkError(response);
-    if (!response.body) throw new Error("Infrastructure Error: No response body");
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      
-      const chunk = decoder.decode(value);
-      const lines = chunk.split("\n").filter(line => line.trim() !== "");
-
-      for (const line of lines) {
-        if (line.includes("[DONE]")) return;
-        if (line.startsWith("data: ")) {
-          try {
-            const jsonStr = line.replace("data: ", "").trim();
-            const json = JSON.parse(jsonStr);
-            
-            // Extract content from unified OpenAI format
-            const content = json.choices?.[0]?.delta?.content || "";
-            if (content) yield content;
-          } catch (e) {
-            // Handle raw error messages if they bypass standard JSON
-            if (line.toLowerCase().includes("error")) yield `\n[Nexus Error]: ${line}`;
-          }
-        }
-      }
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Inference Failed (${response.status})`);
     }
+
+    return response.body; 
   }
 
-  private async checkError(response: Response) {
-    if (response.ok) return;
-
-    let errorDetail = "Inference failed";
+  /**
+   * Helper to verify API Key integrity
+   */
+  async validate_key(): Promise<boolean> {
     try {
-        const errJson = await response.json();
-        errorDetail = errJson.error || errJson.details || response.statusText;
-    } catch (e) {
-        errorDetail = response.statusText;
+        const res = await fetch(`${this.baseUrl}/stats`, {
+            headers: { "Authorization": `Bearer ${this.apiKey}` }
+        });
+        return res.status === 200;
+    } catch {
+        return false;
     }
-
-    if (response.status === 401) throw new Error("❌ Unauthorized: Invalid Nexus API Key");
-    if (response.status === 402) throw new Error("⛔ Quota Exceeded: Upgrade to Pro or use a BYOK provider key.");
-    if (response.status === 403) throw new Error("🛡️ Sovereign Shield: Request blocked by governance policy.");
-    
-    throw new Error(`🚨 Nexus Gateway Error [${response.status}]: ${errorDetail}`);
   }
 }

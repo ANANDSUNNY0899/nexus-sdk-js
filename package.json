@@ -1,6 +1,6 @@
 {
   "name": "nexus-gateway-js",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "High-performance Sovereign AI infrastructure with semantic caching and universal routing.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
