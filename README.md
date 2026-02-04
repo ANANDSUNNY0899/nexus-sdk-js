@@ -73,13 +73,15 @@ const response = await client.chat("What is the capital of France?", {
 });
 console.log(response); // "Paris"
 ```
-# 🤖 Supported Model Engines
+```
+🤖 Supported Model Engines
   Provider	Alias	Default Model
   Groq	llama	llama-3.3-70b-versatile
   Google	gemini	gemini-1.5-flash
   OpenAI	gpt	gpt-3.5-turbo
   OpenAI Pro	pro	gpt-4o
 ```
+
 📊 Infrastructure Benchmarks
 Feature	Standard API	Nexus Gateway
 Latency	1200ms - 3000ms	5ms (Cache Hit)
@@ -93,5 +95,6 @@ To use this SDK, you require a valid API Key.
 Get your Free API Key here : https://www.nexus-gateway.org/
 ```
 License
-MIT License © 2025 Sunny Anand | Documentation[https://www.nexus-gateway.org/docs] | Github[https://github.com/ANANDSUNNY0899/NexusGateway]
+MIT License © 2025 Sunny Anand | 📘 Documentation: https://www.nexus-gateway.org/docs  | 💻 GitHub Repository: https://github.com/ANANDSUNNY0899/NexusGateway
+
 ```
